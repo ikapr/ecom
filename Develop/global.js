@@ -18,6 +18,28 @@ const getCategories = async (request, response) => {
     }
 }
 
+const getCategoryById = async (request, response) => {
+    let errorMessage = `Error Getting Category`;
+    try {
+        const categoryId = request.params.id;
+        const categories = await Category.findAll({ includes: [Product] });
+        
+        let modifiedCategories = categories.map(cat => {
+            return {
+                id: cat.id,
+                name: cat.name,
+                category_name: cat.name,
+            }
+        })
+
+        let categoryThatMatchesTheNumberWePutInTheURL = modifiedCategories.find(cat => cat.id == categoryId);
+        response.json(categoryThatMatchesTheNumberWePutInTheURL);
+    } catch (error) {
+        console.log(errorMessage, error);
+        response.status(500).json({ error: errorMessage });
+    }
+}
+
 const getProducts = async (request, response) => {
     let errorMessage = `Error Getting Products`;
     try {
@@ -84,4 +106,5 @@ module.exports = {
     getProducts,
     getTags,
     getProductTags,
+    getCategoryById,
 }
