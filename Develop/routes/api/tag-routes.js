@@ -1,15 +1,12 @@
-const router = require('express').Router();
 const { Tag } = require('../../models');
-const { getTags } = require('../../global');
+const router = require('express').Router();
+const { getTags, getTagById } = require('../../global');
 
 // The `/api/tags` endpoint
 
 router.get('/', (req, res) => getTags(req, res));
 
-router.get('/:id', (req, res) => {
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
-});
+router.get('/:id', (req, res) => getTagById(req, res));
 
 router.post('/', async (req, res) => {
   try {
