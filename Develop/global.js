@@ -96,7 +96,31 @@ const getTags = async (request, response) => {
     let errorMessage = `Error Getting Tags`;
     try {
         const tags = await Tag.findAll();
-        response.json(tags);
+        const products = await Product.findAll();
+        const productTags = await ProductTag.findAll();
+
+        let modifiedProductTags = productTags.map(prt => {
+            return {
+                id: prt.id,
+                tag_id: prt.tag_id,
+                product_id: prt.product_id,
+                date: new Date().toLocaleString(),
+                tag: tags.find(tg => tg.id == prt.tag_id)?.name,
+                product: products.find(pr => pr.id == prt.product_id)?.name,
+            }
+        })
+
+        let modifiedTags = tags.map(tg => {
+            let productsWithThisTag = modifiedProductTags.filter(mprtg => tg.name == mprtg.tag);
+            let productNamesWithThisTag = productsWithThisTag.map(pr => pr.product);
+            return {
+                id: tg.id,
+                name: tg.name,
+                productsWithThisTag: productNamesWithThisTag
+            }
+        })
+
+        response.json(modifiedTags);
     } catch (error) {
         console.log(errorMessage, error);
         response.status(500).json({ error: errorMessage });

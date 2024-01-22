@@ -20,12 +20,36 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
-  // update a tag's name by its `id` value
+router.put('/:id', async (req, res) => {
+  try {
+    const productTagID = req.params.id;
+    const updatedProductTag = await ProductTag.update(req.body, {
+      where: { id: productTagID }
+    })
+    console.log(`Successfully Updated Product Tag`, updatedProductTag);
+    res.status(200).json({ message: `Successfully Updated Product Tag` });
+  } catch (error) {
+    let errorMessage = `Error Updating Product Tag`;
+    let errorParams = { error, dataToInsert: req.body, response: res, errorMessage };
+    console.log(errorMessage, errorParams);
+    res.status(400).json(errorParams);
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  // delete on tag by its `id` value
+router.delete('/:id', async (req, res) => {
+  try {
+    const productTagID = req.params.id;
+    const deletedProductTag = await ProductTag.destroy({
+      where: { id: productTagID }
+    })
+    console.log(`Successfully Deleted Product Tag`, deletedProductTag);
+    res.status(200).json({ message: `Successfully Deleted Product Tag` });
+  } catch (error) {
+    let errorMessage = `Error Deleting Product Tag`;
+    let errorParams = { error, dataToInsert: req.body, response: res, errorMessage };
+    console.log(errorMessage, errorParams);
+    res.status(400).json(errorParams);
+  }
 });
 
 module.exports = router;
