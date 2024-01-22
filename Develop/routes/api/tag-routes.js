@@ -1,6 +1,6 @@
 const router = require('express').Router();
+const { Tag } = require('../../models');
 const { getTags } = require('../../global');
-const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
 
@@ -11,8 +11,16 @@ router.get('/:id', (req, res) => {
   // be sure to include its associated Product data
 });
 
-router.post('/', (req, res) => {
-  // create a new tag
+router.post('/', async (req, res) => {
+  try {
+    const newTag = await Tag.create(req.body);
+    res.status(201).json({ message: `Successfully Created Tag`, newTag });
+  } catch (error) {
+    let errorMessage = `Error Creating New Tag`;
+    let errorParams = { error, dataToInsert: req.body, response: res, errorMessage };
+    console.log(errorMessage, errorParams);
+    res.status(400).json(errorParams);
+  }
 });
 
 router.put('/:id', (req, res) => {

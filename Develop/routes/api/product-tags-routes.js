@@ -1,6 +1,6 @@
 const router = require('express').Router();
+const { ProductTag } = require('../../models');
 const { getProductTags } = require('../../global');
-// const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/product-tags` endpoint
 
@@ -11,8 +11,16 @@ router.get('/:id', (req, res) => {
   // be sure to include its associated Product data
 });
 
-router.post('/', (req, res) => {
-  // create a new tag
+router.post('/', async (req, res) => {
+  try {
+    const newProductTag = await ProductTag.create(req.body);
+    res.status(201).json({ message: `Successfully Created Prduct Tag`, newProductTag });
+  } catch (error) {
+    let errorMessage = `Error Creating New Product Tag`;
+    let errorParams = { error, dataToInsert: req.body, response: res, errorMessage };
+    console.log(errorMessage, errorParams);
+    res.status(400).json(errorParams);
+  }
 });
 
 router.put('/:id', (req, res) => {
