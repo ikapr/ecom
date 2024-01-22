@@ -1,6 +1,6 @@
 const router = require('express').Router();
+const { Category } = require('../../models');
 const { getCategories, getCategoryById } = require('../../global');
-const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
 
@@ -20,12 +20,36 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
-  // update a category by its `id` value
+router.put('/:id', async (req, res) => {
+  try {
+    const categoryID = req.params.id;
+    const updatedCategory = await Category.update(req.body, {
+      where: { id: categoryID }
+    })
+    console.log(`Successfully Updated Category`, updatedCategory);
+    res.status(200).json({ message: `Successfully Updated Category` });
+  } catch (error) {
+    let errorMessage = `Error Updating Category`;
+    let errorParams = { error, dataToInsert: req.body, response: res, errorMessage };
+    console.log(errorMessage, errorParams);
+    res.status(400).json(errorParams);
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
+router.delete('/:id', async (req, res) => {
+  try {
+    const categoryID = req.params.id;
+    const deletedCategory = await Category.destroy({
+      where: { id: categoryID }
+    })
+    console.log(`Successfully Deleted Category`, deletedCategory);
+    res.status(200).json({ message: `Successfully Deleted Category` });
+  } catch (error) {
+    let errorMessage = `Error Deleting Category`;
+    let errorParams = { error, dataToInsert: req.body, response: res, errorMessage };
+    console.log(errorMessage, errorParams);
+    res.status(400).json(errorParams);
+  }
 });
 
 module.exports = router;
